@@ -11,7 +11,7 @@ end
 
 removeColor(GetLocal().name)
 -- Kirim webhook setelah superbroadcast dikirim
-local myLink = "".. URL .."" --link webhook 
+local myLink = URL --link webhook 
 local gems = GetPlayerInfo().gems
 local gemspent = GetPlayerInfo().gems
 local teks = TextSB
@@ -24,7 +24,7 @@ AddHook("onvariant", "mommy", function(var)
 end)
 
 function crd()
-    SendPacket(2, "action|input\ntext|`^SC SB PREMIUM BY MUFFINN-STORE")
+    SendPacket(2, "action|input\ntext|`^SC SB PREMIUM `0[`^MUFFINN`0-`^STORE`0]")
     Sleep(800)
 end
 
@@ -128,7 +128,6 @@ function super()
 
     if CONFIGURATION.mode_sb == "countup" then
         while count < JumlahSB do
-            if GetWorld() == nil then return end
             SendPacket(2, "action|input\ntext|/sb " .. TextSB)
             UpdateCountAndTime(true, true)
             sisaCount = JumlahSB - count
@@ -141,7 +140,6 @@ function super()
     elseif CONFIGURATION.mode_sb == "countdown" then
         count = JumlahSB
         while count > 0 do
-            if GetWorld() == nil then return end
             SendPacket(2, "action|input\ntext|/sb " .. TextSB)
             UpdateCountAndTime(true, false)
             Sleep(1000)
@@ -152,7 +150,6 @@ function super()
         end
     elseif CONFIGURATION.mode_sb == "timerup" then
         while timer < timers do
-            if GetWorld() == nil then return end
             SendPacket(2, "action|input\ntext|/sb " .. TextSB)
             UpdateCountAndTime(false, true)
             sisaTimer = timers - timer
@@ -165,7 +162,6 @@ function super()
     elseif CONFIGURATION.mode_sb == "timerdown" then
         timer = timers
         while timer > 0 do
-            if GetWorld() == nil then return end
             SendPacket(2, "action|input\ntext|/sb " .. TextSB)
             UpdateCountAndTime(false, false)
             Sleep(1000)
@@ -177,11 +173,11 @@ function super()
     end
 
 function sendWebhookSuperFinished()
-    local currentTime = os.date("%H:%M:%S")
-    local finishedMessage = "Superbroadcast mu telah selesai. Dengan Jumlah Sb: " .. JumlahSB -- Ubah JumlahSB sesuai kebutuhan Anda
-    if CONFIGURATION.display_mode == "timer_count" then
-        finishedMessage = "Superbroadcast mu telah selesai. Dengan Jumlah Waktu Sb : " .. timers .. " menit" -- Ubah timers sesuai kebutuhan Anda
-    end
+local currentTime = os.date("%H:%M:%S")
+local finishedMessage = "Superbroadcast mu telah selesai. Dengan Jumlah Sb: " .. JumlahSB -- Ubah JumlahSB sesuai kebutuhan Anda
+   if CONFIGURATION.display_mode == "timer_count" then
+         finishedMessage = "Superbroadcast mu telah selesai. Dengan Jumlah Waktu Sb : " .. timers .. " menit" -- Ubah timers sesuai kebutuhan Anda
+ end
 
 local finishedEmbed = [[
     {
@@ -190,6 +186,9 @@ local finishedEmbed = [[
                 "title": "PREMIUM SB BY MUFFINN",
                 "color": 0,
                 "description": ">>> ]].. finishedMessage ..[[ \nSuperbroadcast mu selesai pada ]].. currentTime ..[[",
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/emojis/1193136130774802472.gif?size=44&quality=lossless"
+                }
             }
         ]
     }
@@ -197,9 +196,11 @@ local finishedEmbed = [[
 SendWebhook(myLink, finishedEmbed)
 end
 
-sendWebhookSuperFinished()
+if count >= JumlahSB or count == 0 or timer >= timers or timer == 0 then
         SendPacket(2, "action|input\ntext|" .. GetLocal().name .. " `bSuper Broadcasts `8Done!!")
+        sendWebhookSuperFinished()
     end
+end
 
 -- Pemeriksaan IO, OS, dan MakeRequest
 if not io or not os or not MakeRequest then
@@ -222,21 +223,21 @@ local user_id = GetLocal().userid
 
 -- Memeriksa apakah ID pengguna terdaftar
 if is_registered_id(user_id) then
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0] `^IDENTIFY PLAYER : " .. GetLocal().name)
+    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: IDENTIFIED PLAYER : " .. GetLocal().name)
     Sleep(1000)
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0] `^CHECKING UID")
+    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: WAIT CHECK UID")
     Sleep(1000)
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0] `^UID TERDAFTAR")
+    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: UID TERDAFTAR")
     Sleep(1000)
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0] `^STARTING SC SB PREMIUM")
+    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: STARTING SC SB PREMIUM")
     Sleep(1000)
     crd()
     Sleep(1000)
     super()
 else
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0] `^IDENTIFY PLAYER : " .. GetLocal().name)
+    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: IDENTIFIED PLAYER : " .. GetLocal().name)
     Sleep(1000)
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0] `^CHECKING UID")
+    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: WAIT CHECK UID")
     Sleep(1000)
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0] `4UID TIDAK TERDAFTAR KONTAK DISCORD MUFFINN_S")
+    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: UID TIDAK TERDAFTAR KONTAK DISCORD @muffinncps")
 end
