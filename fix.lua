@@ -208,27 +208,6 @@ if not io or not os or not MakeRequest then
     return -- Menghentikan eksekusi skrip
 end
 
--- Definisi fungsi MakeRequest
-function MakeRequest(url, method, headers, data)
-    local http = require("socket.http")
-    local ltn12 = require("ltn12")
-
-    local response_body = {}
-    local res, code, response_headers = http.request{
-        url = url,
-        method = method,
-        headers = headers,
-        source = data and ltn12.source.string(data),
-        sink = ltn12.sink.table(response_body)
-    }
-
-    return {
-        content = table.concat(response_body),
-        code = code,
-        headers = response_headers
-    }
-end
-
 -- Fungsi untuk memeriksa apakah ID pengguna terdaftar
 local function is_registered_id(id)
     for _, registered_id in ipairs(registered_ids) do
