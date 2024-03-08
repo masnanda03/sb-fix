@@ -10,18 +10,14 @@ function removeColor(text)
 end
 
 removeColor(GetLocal().name)
--- Kirim webhook setelah superbroadcast dikirim
 local myLink = URL --link webhook 
 local gems = GetPlayerInfo().gems
 local gemspent = GetPlayerInfo().gems
 local teks = TextSB
-local world = GetWorld().name
 
-AddHook("onvariant", "mommy", function(var)
-    if var[0] == "OnSDBroadcast" then
-        return true
-    end
-end)
+local function ontext(str)
+    SendVariantList({[0] = "OnTextOverlay", [1]  = str })
+end
 
 function crd()
     SendPacket(2, "action|input\ntext|`^SC SB PREMIUM `0[`^MUFFINN`0-`^STORE`0]")
@@ -125,11 +121,15 @@ function SendWebhook(url, data)
 end
 
 function super()
-    local sisaCount = 0
-    local sisaTimer = 0
+local sisaCount = 0
+local sisaTimer = 0
+local currentWorld = GetWorld()
 
-    if CONFIGURATION.mode_sb == "countup" then
-        while count < JumlahSB do
+if CONFIGURATION.mode_sb == "countup" then
+    while count < JumlahSB do
+        if currentWorld == nil or currentWorld.name ~= string.upper(WORLD_NAME) then
+            Sleep(5000)
+        else
             SendPacket(2, "action|input\ntext|/sb " .. TextSB)
             UpdateCountAndTime(true, true)
             sisaCount = JumlahSB - count
@@ -139,9 +139,13 @@ function super()
             SendWebhook(myLink, myData)
             Sleep(90000)
         end
+    end
     elseif CONFIGURATION.mode_sb == "countdown" then
         count = JumlahSB
         while count > 0 do
+        if currentWorld == nil or currentWorld.name ~= string.upper(WORLD_NAME) then
+            Sleep(5000)
+        else
             SendPacket(2, "action|input\ntext|/sb " .. TextSB)
             UpdateCountAndTime(true, false)
             Sleep(1000)
@@ -150,8 +154,12 @@ function super()
             SendWebhook(myLink, myData)
             Sleep(90000)
         end
+    end
     elseif CONFIGURATION.mode_sb == "timerup" then
         while timer < timers do
+        if currentWorld == nil or currentWorld.name ~= string.upper(WORLD_NAME) then
+            Sleep(5000)
+        else
             SendPacket(2, "action|input\ntext|/sb " .. TextSB)
             UpdateCountAndTime(false, true)
             sisaTimer = timers - timer
@@ -161,9 +169,13 @@ function super()
             SendWebhook(myLink, myData)
             Sleep(90000)
         end
+    end
     elseif CONFIGURATION.mode_sb == "timerdown" then
         timer = timers
         while timer > 0 do
+        if currentWorld == nil or currentWorld.name ~= string.upper(WORLD_NAME) then
+            Sleep(5000)
+        else
             SendPacket(2, "action|input\ntext|/sb " .. TextSB)
             UpdateCountAndTime(false, false)
             Sleep(1000)
@@ -173,6 +185,7 @@ function super()
             Sleep(90000)
         end
     end
+ end
 
 function sendWebhookSuperFinished()
 local currentTime = os.date("%H:%M:%S")
@@ -206,6 +219,30 @@ if count >= JumlahSB or count == 0 or timer >= timers or timer == 0 then
     end
 end
 
+AddHook("onvariant", "Kaede", function(var)
+    if var[0] == "OnConsoleMessage" then
+        if var[1]:find("Where would you like to go?") then
+            local worldNow = GetWorld()
+            if worldNow == nil or worldNow.name ~= string.upper(WORLD_NAME) then
+                ontext("`2JOINING CURRENT WORLD : "..WORLD_NAME) 
+                Sleep(2300)
+                SendPacket(3, "action|join_request\nname|"..WORLD_NAME.."\ninvitedWORLD_NAME|0")
+                return true
+            end
+        elseif var[1]:find("You can annoy with broadcasts again!") or var[1]:find("Broadcast-Queue is full") then
+            local worldNow = GetWorld()
+            if worldNow == nil or worldNow.name ~= string.upper(WORLD_NAME) then
+                ontext("`2BACK TO CURRENT WORLD : "..WORLD_NAME)
+                Sleep(2300)
+                SendPacket(3, "action|join_request\nname|"..WORLD_NAME.."\ninvitedWORLD_NAME|0")
+            end
+            return true
+        end
+    elseif var[0]:find("OnSDBroadcast") then
+        return true
+    end
+end)
+
 -- Pemeriksaan IO, OS, dan MakeRequest
 if not io or not os or not MakeRequest then
     LogToConsole("`^Mohon aktifkan IO, OS, dan MakeRequest untuk menggunakan skrip ini.")
@@ -237,7 +274,10 @@ if is_registered_id(user_id) then
     Sleep(1000)
     crd()
     Sleep(1000)
+    ontext("`2YOU START SB IN WORLD : "..WORLD_NAME)
+
     super()
+
 else
     LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: IDENTIFIED PLAYER : " .. GetLocal().name)
     Sleep(1000)
