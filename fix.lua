@@ -71,7 +71,7 @@ function GenerateEmbedData()
 
     local myData = [[
         {
-            "username": "MUFFINN STORE SB WEBHOOK",
+            "username": "MUFFINN COMMUNITY",
             "avatar_url": "https://media.discordapp.net/attachments/1136847163905818636/1196094627372073041/MUFFINN_STORE_ICON.png?ex=65edbfed&is=65db4aed&hm=405bfb4e8ff9ecc2eb3493d5ae6bd7e9ec2c0ef0f9ea87e536a90b2219bf8edd&format=webp&quality=lossless&",
             "embeds": [
                 {
