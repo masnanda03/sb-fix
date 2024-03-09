@@ -12,12 +12,22 @@ end
 removeColor(GetLocal().name)
 local myLink = URL --link webhook 
 local gems = GetPlayerInfo().gems
-local gemspent = GetPlayerInfo().gems
 local teks = TextSB
 
 local function ontext(str)
     SendVariantList({[0] = "OnTextOverlay", [1]  = str })
 end
+
+local function FormatNumber(num)
+    num = math.floor(num + 0.5)
+    local formatted = tostring(num)
+    local k = 3
+    while k < #formatted do
+       formatted = formatted:sub(1, #formatted - k) .. "," .. formatted:sub(#formatted - k + 1)
+       k = k + 4
+    end
+    return formatted
+ end
 
 function crd()
     SendPacket(2, "action|input\ntext|`^SC SB PREMIUM `0[`^MUFFINN`0-`^STORE`0]")
@@ -44,6 +54,9 @@ function GenerateEmbedData()
     local countText
     local countValue
     local waktuSekarang = os.date("%H:%M:%S")
+
+    local ingfokan = math.abs(GetPlayerInfo().gems - gems)
+    gems = GetPlayerInfo().gems
 
     if CONFIGURATION.display_mode == "sb_count" then
         countText = "Status Broadcast"
@@ -75,28 +88,28 @@ function GenerateEmbedData()
             "avatar_url": "https://media.discordapp.net/attachments/1136847163905818636/1196094627372073041/MUFFINN_STORE_ICON.png?ex=65edbfed&is=65db4aed&hm=405bfb4e8ff9ecc2eb3493d5ae6bd7e9ec2c0ef0f9ea87e536a90b2219bf8edd&format=webp&quality=lossless&",
             "embeds": [
                 {
-                    "title": "PREMIUM SB BY MUFFINN",
+                    "title": "AUTO SB ADVANCE",
                     "color": 0,
                     "fields": [
                         {
-                            "name": "<:player:1203057110208876656> Player",
-                            "value": ">>> ]]..removeColor(GetLocal().name) ..[[",
+                            "name": "<:player:1203057110208876656> Player Info",
+                            "value": ">>> Name Player : ]]..removeColor(GetLocal().name) ..[[",
                             "inline": true
                         },
                         {
-                            "name": "<:world:1203057112595562628> World",
-                            "value": ">>> ]].. GetWorld().name ..[[",
-                            "inline": true
+                            "name": "<:world:1203057112595562628> World Info",
+                            "value": ">>> World Name : ]].. GetWorld().name ..[[",
+                            "inline": false
                         },
                         {
-                            "name": "<:gems:1203057115770650664> Gems",
-                            "value": ">>> ]].. gems ..[[",
-                            "inline": true
+                            "name": "<:gems:1203057115770650664> Gems Info",
+                            "value": ">>> Current Gems : ]].. FormatNumber(gems) ..[[\n Gems Used : ]] .. FormatNumber(ingfokan) .. [[",
+                            "inline": false
                         },
                         {
                             "name": "<a:broadcast:1203650179866296340> ]].. countText ..[[",
                             "value": ">>> ]].. countValue ..[[",
-                            "inline": true
+                            "inline": false
                         },
                         {
                             "name": "<a:time:1203650182164512769> Time",
@@ -104,7 +117,7 @@ function GenerateEmbedData()
                             "inline": false
                         },
                         {
-                            "name": ":bookmark_tabs: Teks Sb",
+                            "name": ":bookmark_tabs: TEKS SB",
                             "value": ">>> ]].. removeColor(teks) ..[[",
                             "inline": false
                         }
