@@ -84,7 +84,7 @@ function GenerateEmbedData()
 
     local myData = [[
         {
-            "username": "MUFFINN COMMUNITY",
+            "username": "𝐌𝐔𝐅𝐅𝐈𝐍𝐍 𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐓𝐘",
             "avatar_url": "https://media.discordapp.net/attachments/1136847163905818636/1196094627372073041/MUFFINN_STORE_ICON.png?ex=65edbfed&is=65db4aed&hm=405bfb4e8ff9ecc2eb3493d5ae6bd7e9ec2c0ef0f9ea87e536a90b2219bf8edd&format=webp&quality=lossless&",
             "embeds": [
                 {
@@ -209,11 +209,11 @@ local finishedMessage = "Superbroadcast mu telah selesai. Dengan Jumlah Sb: " ..
 
 local finishedEmbed = [[
     {
-        "username": "MUFFINN STORE SB WEBHOOK",
+        "username": "𝐌𝐔𝐅𝐅𝐈𝐍𝐍 𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐓𝐘",
         "avatar_url": "https://media.discordapp.net/attachments/1136847163905818636/1196094627372073041/MUFFINN_STORE_ICON.png?ex=65edbfed&is=65db4aed&hm=405bfb4e8ff9ecc2eb3493d5ae6bd7e9ec2c0ef0f9ea87e536a90b2219bf8edd&format=webp&quality=lossless&",
         "embeds": [
             {
-                "title": "PREMIUM SB BY MUFFINN",
+                "title": "AUTO SB ADVANCE",
                 "color": 0,
                 "description": ">>> ]].. finishedMessage ..[[ \nSuperbroadcast mu selesai pada ]].. currentTime ..[[",
                 "thumbnail": {
