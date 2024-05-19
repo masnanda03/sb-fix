@@ -98,7 +98,7 @@ function GenerateEmbedData()
                         },
                         {
                             "name": "<:world:1203057112595562628> Current World",
-                            "value": "```]].. GetWorld().name ..[[",
+                            "value": "```]].. GetWorld().name ..[[```",
                             "inline": true
                         },
                         {
