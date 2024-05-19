@@ -92,33 +92,33 @@ function GenerateEmbedData()
                     "color": 0,
                     "fields": [
                         {
-                            "name": "<:player:1203057110208876656> Player Info",
-                            "value": ">>> Name Player : ]]..removeColor(GetLocal().name) ..[[",
+                            "name": "<:player:1203057110208876656> Player Name",
+                            "value": "```]]..removeColor(GetLocal().name) ..[[```",
+                            "inline": false
+                        },
+                        {
+                            "name": "<:world:1203057112595562628> Current World",
+                            "value": "```]].. GetWorld().name ..[[",
                             "inline": true
                         },
                         {
-                            "name": "<:world:1203057112595562628> World Info",
-                            "value": ">>> World Name : ]].. GetWorld().name ..[[",
-                            "inline": false
-                        },
-                        {
                             "name": "<:gems:1203057115770650664> Gems Info",
-                            "value": ">>> Current Gems : ]].. FormatNumber(gems) ..[[\n Gems Used : ]] .. FormatNumber(ingfokan) .. [[",
-                            "inline": false
+                            "value": "```Current Gems : ]].. FormatNumber(gems) ..[[\n Gems Used : ]] .. FormatNumber(ingfokan) .. [[```",
+                            "inline": true
                         },
                         {
                             "name": "<a:broadcast:1203650179866296340> ]].. countText ..[[",
-                            "value": ">>> ]].. countValue ..[[",
+                            "value": "```]].. countValue ..[[```",
                             "inline": false
                         },
                         {
                             "name": "<a:time:1203650182164512769> Time",
-                            "value": ">>> ]].. waktuSekarang ..[[",
+                            "value": "```]].. waktuSekarang ..[[```",
                             "inline": false
                         },
                         {
-                            "name": ":bookmark_tabs: TEKS SB",
-                            "value": ">>> ]].. removeColor(teks) ..[[",
+                            "name": ":bookmark_tabs: Teks Sent SuperBroadcast",
+                            "value": "```]].. removeColor(teks) ..[[```",
                             "inline": false
                         }
                     ]
