@@ -103,7 +103,7 @@ function GenerateEmbedData()
                         },
                         {
                             "name": "<:gems:1203057115770650664> Gems Info",
-                            "value": "```Current Gems : ]].. FormatNumber(gems) ..[[\n Gems Used : ]] .. FormatNumber(ingfokan) .. [[```",
+                            "value": "```Current Gems : ]].. FormatNumber(gems) ..[[\nGems Used : ]] .. FormatNumber(ingfokan) .. [[```",
                             "inline": true
                         },
                         {
