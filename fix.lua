@@ -89,7 +89,7 @@ function GenerateEmbedData()
             "embeds": [
                 {
                     "title": "AUTO SB ADVANCE",
-                    "color": 0,
+                    "color": "]] ..math.random(1000000,9999999).. [[",
                     "fields": [
                         {
                             "name": "<:player:1203057110208876656> Player Name",
@@ -214,7 +214,7 @@ local finishedEmbed = [[
         "embeds": [
             {
                 "title": "AUTO SB ADVANCE",
-                "color": 0,
+                "color": "]] ..math.random(1000000,9999999).. [[",
                 "description": ">>> ]].. finishedMessage ..[[ \nSuperbroadcast mu selesai pada ]].. currentTime ..[[",
                 "thumbnail": {
                     "url": "https://cdn.discordapp.com/emojis/1193136130774802472.gif?size=44&quality=lossless"
