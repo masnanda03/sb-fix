@@ -1,5 +1,10 @@
 --MUFFINN STORE--
-local registered_ids = {134611, 120824, 239848, 475429, 356083, 753490, 774228}
+local registered_ids = {
+134611, 120824, 239848, 
+475429, 356083, 753490, 
+774228, 506287
+}
+
 local count = 0
 local timer = 0
 
