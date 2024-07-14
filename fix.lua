@@ -1,4 +1,4 @@
---MUFFINN STORE--
+--MUFFINN COMMUNITY--
 local registered_ids = {
     134611, 120824, 239848, 
     475429, 356083, 753490, 
@@ -8,269 +8,320 @@ local registered_ids = {
 
 }
 
+local options = { check_startsb = false, check_webhook_use = false }
+local initial_teks = "Your Sb text here"
+local teks = initial_teks
 local count = 0
-local timer = 0
-
-function removeColor(text)
-    local cleanedStr = string.gsub(text, "`(%S)", '')
-    cleanedStr = string.gsub(cleanedStr, "`{2}|(~{2})", '')
-    return cleanedStr
-end
-
-removeColor(GetLocal().name)
-local myLink = URL --link webhook 
+local sisacount = 0
+local WORLD_NAME = ""
 local gems = GetPlayerInfo().gems
-local teks = TextSB
+local SpamDelay = 40
+local counterMode = "up"
 
-local function ontext(str)
-    SendVariantList({[0] = "OnTextOverlay", [1]  = str })
+function CHECKBOX(B)
+    return B and "1" or "0"
 end
 
-local function FormatNumber(num)
-    num = math.floor(num + 0.5)
-    local formatted = tostring(num)
-    local k = 3
-    while k < #formatted do
-       formatted = formatted:sub(1, #formatted - k) .. "," .. formatted:sub(#formatted - k + 1)
-       k = k + 4
-    end
-    return formatted
- end
+function log(str)
+   LogToConsole("`0[`#Muffinn Sb`0]`o "..str)
+end
 
 function crd()
-    SendPacket(2, "action|input\ntext|`^SC SB PREMIUM `0[`^MUFFINN`0-`^STORE`0]")
+    SendPacket(2, "action|input\ntext|`0PROXY SB PREMIUM BY `#@Muffinn")
     Sleep(800)
 end
 
-function UpdateCountAndTime(isCount, isIncrease)
-    if isCount then
-        if isIncrease then
-            count = count + 1
-        else
-            count = count - 1
-        end
-    else
-        if isIncrease then
-            timer = timer + 1.5
-        else
-            timer = timer - 1.5
-        end
-    end
+function overlayText(text)
+  var = {}
+  var[0] = "OnTextOverlay"
+  var[1] = "`0[`#Muffinn Sb`0]`o ".. text
+  SendVariantList(var)
 end
 
-function GenerateEmbedData()
-    local countText
-    local countValue
-    local waktuSekarang = os.date("%H:%M:%S")
+function removeColor(text)
+    return text:gsub("`.", "")
+end
 
-    local ingfokan = math.abs(GetPlayerInfo().gems - gems)
-    gems = GetPlayerInfo().gems
+function FormatNumber(num)
+    return tostring(num):reverse():gsub("%d%d%d", "%1,"):reverse():gsub("^,", "")
+end
 
-    if CONFIGURATION.display_mode == "sb_count" then
-        countText = "Status Broadcast"
-        if CONFIGURATION.mode_sb == "countup" then
-            countValue = "SB Send : " .. count .. " out of total SB : " .. JumlahSB
-        elseif CONFIGURATION.mode_sb == "countdown" then
-            countValue = count .. " SB left"
-        elseif CONFIGURATION.mode_sb == "timerup" then
-            countValue = string.format("%.1f", timers - timer) .. " Min of " .. timers .. " Min"
-        elseif CONFIGURATION.mode_sb == "timerdown" then
-            countValue = string.format("%.1f", timer) .. " Min left"
-        end
-    elseif CONFIGURATION.display_mode == "timer_count" then
-        countText = "Status Broadcast"
-        if CONFIGURATION.mode_sb == "countup" then
-            countValue = "SB Send : " .. count .. " out of total SB : " .. JumlahSB
-        elseif CONFIGURATION.mode_sb == "countdown" then
-            countValue = count .. " SB left"
-        elseif CONFIGURATION.mode_sb == "timerup" then
-            countValue = string.format("%.1f", timers - timer) .. " Min of " .. timers .. " Min"
-        elseif CONFIGURATION.mode_sb == "timerdown" then
-            countValue = string.format("%.1f", timer) .. " Min left"
-        end
-    end
+function sendWebhook(message)
+  if not options.check_webhook_use then return end
+  
+  local success, error = pcall(function()
+      local waktuSekarang = os.date("%H:%M:%S")
+      local ingfokan = math.abs(GetPlayerInfo().gems - gems)
+      gems = GetPlayerInfo().gems
 
-    local myData = [[
-        {
-            "username": "𝐌𝐔𝐅𝐅𝐈𝐍𝐍 𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐓𝐘",
-            "avatar_url": "https://media.discordapp.net/attachments/1136847163905818636/1196094627372073041/MUFFINN_STORE_ICON.png?ex=65edbfed&is=65db4aed&hm=405bfb4e8ff9ecc2eb3493d5ae6bd7e9ec2c0ef0f9ea87e536a90b2219bf8edd&format=webp&quality=lossless&",
-            "embeds": [
-                {
-                    "title": "AUTO SB ADVANCE",
-                    "color": "]] ..math.random(1000000,9999999).. [[",
-                    "fields": [
+      local myData = [[
+                  {
+                  "embeds": [
+                    {
+                      "title": "Superbroadcast Premium",
+                      "color": "]] ..math.random(1000000,9999999).. [[",
+                      "fields": [
                         {
-                            "name": "<:player:1203057110208876656> Player Name",
-                            "value": "```]]..removeColor(GetLocal().name) ..[[```",
-                            "inline": false
+                          "name": "<:player:1203057110208876656> Player Name",
+                          "value": "```]] .. removeColor(GetLocal().name) .. [[```",
+                          "inline": false
                         },
                         {
-                            "name": "<:world:1203057112595562628> Current World",
-                            "value": "```]].. GetWorld().name ..[[```",
-                            "inline": true
+                          "name": "<:world:1203057112595562628> Current World",
+                          "value": "```]] .. GetWorld().name .. [[```",
+                          "inline": true
                         },
                         {
-                            "name": "<:gems:1203057115770650664> Gems Info",
-                            "value": "```Current Gems : ]].. FormatNumber(gems) ..[[\nGems Used : ]] .. FormatNumber(ingfokan) .. [[```",
-                            "inline": true
+                          "name": "<:gems:1203057115770650664> Gems Info",
+                          "value": "```Current Gems : ]] .. FormatNumber(gems) .. [[\nGems Used : ]] .. FormatNumber(ingfokan) .. [[```",
+                          "inline": true
                         },
                         {
-                            "name": "<a:broadcast:1203650179866296340> ]].. countText ..[[",
-                            "value": "```]].. countValue ..[[```",
-                            "inline": false
-                        },
-                        {
-                            "name": "<a:time:1203650182164512769> Time",
-                            "value": "```]].. waktuSekarang ..[[```",
-                            "inline": false
-                        },
-                        {
-                            "name": ":bookmark_tabs: Teks Sent SuperBroadcast",
-                            "value": "```]].. removeColor(teks) ..[[```",
-                            "inline": false
+                          "name": "<a:broadcast:1203650179866296340> Superbroadcast Send",
+                          "value": "```]] .. message .. [[```",
+                          "inline": false
                         }
-                    ]
-                }
-            ]
-        }
-    ]]
-    return myData
+                      ]
+                    }
+                  ],
+                  "username": "𝐌𝐔𝐅𝐅𝐈𝐍𝐍 𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐓𝐘",
+                  "avatar_url": "https://media.discordapp.net/attachments/1136847163905818636/1196094627372073041/MUFFINN_STORE_ICON.png?ex=65f6fa6d&is=65e4856d&hm=51bb58f88d7c0fac188ffe8d5181d63767f060e53a90d97d9f3bee0c9fea0286&format=webp&quality=lossless&",
+                  "attachments": []
+                  }
+      ]]
+      SendWebhook(webhook_url, myData)
+  end)
+
+  if not success then
+      log("Error sending webhook: " .. tostring(error))
+  end
+end
+
+function sendWebhookFinished(completionMessage)
+  local finishedEmbed = [[
+      {
+          "username": "𝐌𝐔𝐅𝐅𝐈𝐍𝐍 𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐓𝐘",
+          "avatar_url": "https://media.discordapp.net/attachments/1136847163905818636/1196094627372073041/MUFFINN_STORE_ICON.png?ex=65edbfed&is=65db4aed&hm=405bfb4e8ff9ecc2eb3493d5ae6bd7e9ec2c0ef0f9ea87e536a90b2219bf8edd&format=webp&quality=lossless&",
+          "embeds": [
+              {
+                  "title": "AUTO SB ADVANCE",
+                  "color": "]] ..math.random(1000000,9999999).. [[",
+                  "description": ">>> ]].. completionMessage ..[[",
+                  "thumbnail": {
+                      "url": "https://cdn.discordapp.com/emojis/1193136130774802472.gif?size=44&quality=lossless"
+                  }
+              }
+          ]
+      }
+  ]]
+  SendWebhook(webhook_url, finishedEmbed)
 end
 
 function SendWebhook(url, data)
-    MakeRequest(url,"POST",{["Content-Type"] = "application/json"},data)
+    MakeRequest(url, "POST", {["Content-Type"] = "application/json"}, data)
 end
 
-function super()
-local sisaCount = 0
-local sisaTimer = 0
-local currentWorld = GetWorld()
-
-if CONFIGURATION.mode_sb == "countup" then
-    while count < JumlahSB do
-        if currentWorld == nil or currentWorld.name ~= string.upper(WORLD_NAME) then
-            Sleep(5000)
-        else
-            SendPacket(2, "action|input\ntext|/sb " .. TextSB)
-            UpdateCountAndTime(true, true)
-            sisaCount = JumlahSB - count
-            Sleep(1000)
-            SendPacket(2, "action|input\ntext|/me `^Super Broadcasts Send (megaphone) `bSB Count `0[`b" .. count .. "`0/`b" .. JumlahSB .. "`0] `bRemains `0[`b" .. sisaCount .."`0]")
-            local myData = GenerateEmbedData()
-            SendWebhook(myLink, myData)
-            Sleep(90000)
-        end
-    end
-    elseif CONFIGURATION.mode_sb == "countdown" then
-        count = JumlahSB
-        while count > 0 do
-        if currentWorld == nil or currentWorld.name ~= string.upper(WORLD_NAME) then
-            Sleep(5000)
-        else
-            SendPacket(2, "action|input\ntext|/sb " .. TextSB)
-            UpdateCountAndTime(true, false)
-            Sleep(1000)
-            SendPacket(2, "action|input\ntext|/me `^Super Broadcasts Send (megaphone) `bSB Remaining `0[`b" .. count .. " `2Left`0]")
-            local myData = GenerateEmbedData()
-            SendWebhook(myLink, myData)
-            Sleep(90000)
-        end
-    end
-    elseif CONFIGURATION.mode_sb == "timerup" then
-        while timer < timers do
-        if currentWorld == nil or currentWorld.name ~= string.upper(WORLD_NAME) then
-            Sleep(5000)
-        else
-            SendPacket(2, "action|input\ntext|/sb " .. TextSB)
-            UpdateCountAndTime(false, true)
-            sisaTimer = timers - timer
-            Sleep(1000)
-            SendPacket(2, "action|input\ntext|/me `^Super Broadcasts Send (megaphone) `bTime Remaining `0: `b" .. sisaTimer .. " `8Minutes `0OF`b " .. timers .. " `8Minutes")
-            local myData = GenerateEmbedData()
-            SendWebhook(myLink, myData)
-            Sleep(90000)
-        end
-    end
-    elseif CONFIGURATION.mode_sb == "timerdown" then
-        timer = timers
-        while timer > 0 do
-        if currentWorld == nil or currentWorld.name ~= string.upper(WORLD_NAME) then
-            Sleep(5000)
-        else
-            SendPacket(2, "action|input\ntext|/sb " .. TextSB)
-            UpdateCountAndTime(false, false)
-            Sleep(1000)
-            SendPacket(2, "action|input\ntext|/me `^Super Broadcasts Send (megaphone) `bTime Remaining `0: `b[`0" .. timer .. " `2Minutes Left`b]")
-            local myData = GenerateEmbedData()
-            SendWebhook(myLink, myData)
-            Sleep(90000)
-        end
-    end
- end
-
-function sendWebhookSuperFinished()
-local currentTime = os.date("%H:%M:%S")
-local finishedMessage = "Superbroadcast mu telah selesai. Dengan Jumlah Sb: " .. JumlahSB -- Ubah JumlahSB sesuai kebutuhan Anda
-   if CONFIGURATION.display_mode == "timer_count" then
-         finishedMessage = "Superbroadcast mu telah selesai. Dengan Jumlah Waktu Sb : " .. timers .. " menit" -- Ubah timers sesuai kebutuhan Anda
- end
-
-local finishedEmbed = [[
-    {
-        "username": "𝐌𝐔𝐅𝐅𝐈𝐍𝐍 𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐓𝐘",
-        "avatar_url": "https://media.discordapp.net/attachments/1136847163905818636/1196094627372073041/MUFFINN_STORE_ICON.png?ex=65edbfed&is=65db4aed&hm=405bfb4e8ff9ecc2eb3493d5ae6bd7e9ec2c0ef0f9ea87e536a90b2219bf8edd&format=webp&quality=lossless&",
-        "embeds": [
-            {
-                "title": "AUTO SB ADVANCE",
-                "color": "]] ..math.random(1000000,9999999).. [[",
-                "description": ">>> ]].. finishedMessage ..[[ \nSuperbroadcast mu selesai pada ]].. currentTime ..[[",
-                "thumbnail": {
-                    "url": "https://cdn.discordapp.com/emojis/1193136130774802472.gif?size=44&quality=lossless"
-                }
-            }
-        ]
-    }
-]]
-SendWebhook(myLink, finishedEmbed)
+function cleanSignText(str)
+    local cleanedStr = str
+    cleanedStr = string.gsub(cleanedStr, "Dr%.%s*", '')
+    cleanedStr = string.gsub(cleanedStr, "%s*%[BOOST%]", '')
+    cleanedStr = string.gsub(cleanedStr, "%(%d+%)", '')
+    return cleanedStr
 end
 
-if count >= JumlahSB or count == 0 or timer >= timers or timer == 0 then
-        SendPacket(2, "action|input\ntext|" .. GetLocal().name .. " `bSuper Broadcasts `8Done!!")
-        sendWebhookSuperFinished()
+function startsb()
+    if spamThread then
+        KillThread(spamThread)
     end
-end
-
-AddHook("onvariant", "Kaede", function(var)
-    if var[0] == "OnConsoleMessage" then
-        if var[1]:find("Where would you like to go?") then
-            local worldNow = GetWorld()
-            if worldNow == nil or worldNow.name ~= string.upper(WORLD_NAME) then
-                ontext("`2JOINING CURRENT WORLD : "..WORLD_NAME) 
-                Sleep(2300)
-                SendPacket(3, "action|join_request\nname|"..WORLD_NAME.."\ninvitedWORLD_NAME|0")
-                return true
+    WORLD_NAME = string.upper(GetWorld().name)
+    local total_sent = 0
+    local initial_count = counterMode == "up" and 1 or SpamDelay
+    count = initial_count
+    spamThread = RunThread(function()
+        while options.check_startsb do
+            local currentWorld = GetWorld()
+            if currentWorld == nil or currentWorld.name ~= WORLD_NAME then
+                log("`0[`eBroadcast`0] Not in the correct world. Attempting to enter " .. WORLD_NAME)
+                options.check_startsb = false  -- Pause SB
+                SendPacket(3, "action|join_request\nname|" .. WORLD_NAME .. "\ninvitedWorld|0")
+                Sleep(5000)  -- Wait for 5 seconds to allow world change
+                local attempts = 0
+                while (currentWorld == nil or currentWorld.name ~= WORLD_NAME) and attempts < 5 do
+                    currentWorld = GetWorld()
+                    Sleep(1000)
+                    attempts = attempts + 1
+                end
+                if currentWorld and currentWorld.name == WORLD_NAME then
+                    log("`0[`eBroadcast`0] Successfully entered " .. WORLD_NAME .. ". Resuming SB.")
+                    options.check_startsb = true  -- Resume SB
+                else
+                    log("`0[`eBroadcast`0] Failed to enter " .. WORLD_NAME .. ". SB stopped.")
+                    return
+                end
             end
-        elseif var[1]:find("You can annoy with broadcasts again!") or var[1]:find("Broadcast-Queue is full") then
-            local worldNow = GetWorld()
-            if worldNow == nil or worldNow.name ~= string.upper(WORLD_NAME) then
-                ontext("`2BACK TO CURRENT WORLD : "..WORLD_NAME)
-                Sleep(2300)
-                SendPacket(3, "action|join_request\nname|"..WORLD_NAME.."\ninvitedWORLD_NAME|0")
+
+            if teks ~= "" then
+                if counterMode == "up" and count <= SpamDelay then
+                    SendPacket(2, "action|input\ntext|/sb " .. teks .. " `##MuffinnProxy")
+                    total_sent = total_sent + 1
+                    Sleep(1000)
+                    SendPacket(2, "action|input\ntext|/me `^Super Broadcasts Send (megaphone) `bSB Count `0[`b" .. count .. "`0/`b" .. SpamDelay.. "`0] `##MuffinnProxy")
+                    local message = "SB sent " .. count .. " out of " .. SpamDelay
+                    pcall(sendWebhook, message)
+                    count = count + 1
+                    Sleep(90000)
+                elseif counterMode == "down" then
+                    count = SpamDelay
+                    while count > 0 and options.check_startsb do
+                        SendPacket(2, "action|input\ntext|/sb " .. teks .. " `##MuffinnProxy")
+                        total_sent = total_sent + 1
+                        Sleep(1000)
+                        count = count - 1
+                        SendPacket(2, "action|input\ntext|/me `^Super Broadcasts Send (megaphone) `bSB Remains `0[`b" .. count .. "`0] `##MuffinnProxy")
+                        local message = "SB Remains " .. count
+                        pcall(sendWebhook, message)
+                        Sleep(90000)
+                    end
+                else
+                    -- SB finished
+                    options.check_startsb = false
+                    break
+                end
+            else
+                Sleep(1000)
+            end
+        end
+        
+        -- Finish up after the loop
+        options.check_startsb = false
+        log("`0[`eBroadcast`0] Superbroadcast `4Finished")
+        Sleep(1000)
+        SendPacket(2, "action|input\ntext|/me `^Super Broadcasts Done (megaphone) `bSB Count `0[`b" .. total_sent .. "`0] `##MuffinnProxy")
+        local completionMessage = "Your SB is done, total SB sent: " .. total_sent
+        pcall(sendWebhookFinished, completionMessage)
+
+        -- Reset count and text
+        count = initial_count
+        teks = initial_teks
+        log("`0[`eBroadcast`0] Count reset to " .. initial_count .. " and text reset to default")
+    end)
+end
+
+function main()
+function hook_1(varlist)
+    if varlist[0]:find("OnConsoleMessage") then
+        if varlist[1]:find("Spam detected!") then
+        return true
+        end
+    end
+    return false
+end
+AddHook("onvariant", "hook one", hook_1)
+AddHook("onvariant", "mommy", function(var)
+  if var[0] == "OnSDBroadcast" then
+      overlayText("Succes Blocked `4SDB!")
+      return true
+   end
+  return false
+end)
+
+    AddHook("onvariant", "sign_edit_hook", function(var)
+        if var[0] == "OnDialogRequest" and var[1]:find("sign_edit") then
+            local displayText = var[1]:match("display_text||(.-)|128|")
+            if displayText then
+                teks = cleanSignText(displayText)
+                log("`0[`eBroadcast`0] Text Set : " ..displayText)
+                if options.check_startsb then
+                    startsb()
+                end
             end
             return true
         end
-    elseif var[0]:find("OnSDBroadcast") then
-        return true
-    end
-end)
+        return false
+    end)
 
--- Pemeriksaan IO, OS, dan MakeRequest
+    function ShowSbDialog()
+        local varlist_command = {}
+        varlist_command[0] = "OnDialogRequest"
+        varlist_command[1] = [[
+set_default_color|`o
+add_label_with_icon|big|`0Set Your Super Broadcast here|left|2480|
+add_spacer|small|
+add_checkbox|EnableSb|`wStart Sb|]]..CHECKBOX(options.check_startsb)..[[|
+add_checkbox|EnableWebhook|`wEnabled Webhook|]]..CHECKBOX(options.check_webhook_use)..[[|
+add_text_input|SetCount|`#Counter Set :|]]..SpamDelay..[[|5|
+add_smalltext|`9Note `0: Default interval is `#40 `0means 1 hours sb|
+add_spacer|small|
+add_textbox|`#Super Broadcast `0Text :|
+add_smalltext|`0(Max 120 letters or you can wrench sign to copy automaticly)|
+add_text_input|SetSbText||]]..teks..[[|120|
+add_spacer|small|
+text_scaling_string|jakhelperbdjsjn|
+add_smalltext|`wCounter Mode Superbroadcast :|
+add_checkicon|CounterUp|`0Counter Up|staticBlueFrame|484||]] .. (counterMode == "up" and "1" or "0") .. [[|
+add_checkicon|CounterDown|`0Counter Down|staticBlueFrame|486||]] .. (counterMode == "down" and "1" or "0") .. [[|
+add_checkicon||END_LIST|noflags|0||
+add_quick_exit|
+end_dialog|iprogram|Close|Update|
+]]
+        SendVariantList(varlist_command)
+    end
+
+    AddHook("OnSendPacket", "P", function(type, str)
+        if str:find("/set") then
+            if str:match("/set") then
+                ShowSbDialog()
+                return true
+            end
+        end
+        if str:find("/startsb") then
+            if str:match("/startsb") then
+                startsb()
+                return true
+            end
+        end
+        if str:find("EnableSb|1") and not options.check_startsb then
+            options.check_startsb = true
+            startsb()
+            log("`0[`eBroadcast`0] Superbroadcast `2Enabled")
+        elseif str:find("EnableSb|0") and options.check_startsb then
+            options.check_startsb = false
+            if spamThread then
+                KillThread(spamThread)
+                spamThread = nil
+            end
+            log("`0[`eBroadcast`0] Superbroadcast `4Disabled")
+        end
+    	if str:find("CounterUp|1") then
+        	counterMode = "up"
+        	log("`0[`eBroadcast`0] Counter mode set to Up")
+    	elseif str:find("CounterDown|1") then
+        	counterMode = "down"
+        	log("`0[`eBroadcast`0] Counter mode set to Down")
+    	end
+        if str:find("EnableWebhook|1") and not options.check_webhook_use then
+            options.check_webhook_use = true
+            log("`0[`eBroadcast`0] Webhook `2Enabled")
+        elseif str:find("EnableWebhook|0") and options.check_webhook_use then
+            options.check_webhook_use = false
+            log("`0[`eBroadcast`0] Webhook `4Disabled")
+        end
+        local newDelay = str:match("SetCount|(%d+)")
+        if newDelay and tonumber(newDelay) and tonumber(newDelay) ~= SpamDelay then
+            SpamDelay = tonumber(newDelay)
+        end
+        local newText = str:match("SetSbText|(.-)|")
+        if newText and newText ~= teks then
+            teks = newText
+        end
+    end)
+end
+
 if not io or not os or not MakeRequest then
-    LogToConsole("`^Mohon aktifkan IO, OS, dan MakeRequest untuk menggunakan skrip ini.")
+    log("Makesure turn on `2io, os, makerequest")
     return -- Menghentikan eksekusi skrip
 end
 
--- Fungsi untuk memeriksa apakah ID pengguna terdaftar
 local function is_registered_id(id)
     for _, registered_id in ipairs(registered_ids) do
         if id == registered_id then
@@ -280,29 +331,16 @@ local function is_registered_id(id)
     return false
 end
 
--- Mendapatkan ID pengguna lokal
 local user_id = GetLocal().userid
 
--- Memeriksa apakah ID pengguna terdaftar
 if is_registered_id(user_id) then
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: IDENTIFIED PLAYER : " .. GetLocal().name)
-    Sleep(1000)
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: WAIT CHECK UID")
-    Sleep(1000)
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: UID TERDAFTAR")
-    Sleep(1000)
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: STARTING SC SB PREMIUM")
-    Sleep(1000)
-    crd()
-    Sleep(1000)
-    ontext("`2YOU START SB IN WORLD : "..WORLD_NAME)
-
-    super()
-
+log("Makesure you set webhook link, if u enable webhook")
+log("Script active")
+Sleep(100)
+log("Do /set to setting sb")
+crd()
+Sleep(100)
+main()
 else
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: IDENTIFIED PLAYER : " .. GetLocal().name)
-    Sleep(1000)
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: WAIT CHECK UID")
-    Sleep(1000)
-    LogToConsole("`0[`^MUFFINN`0-`^STORE`0]`^: UID TIDAK TERDAFTAR KONTAK DISCORD @muffinncps")
+log("Uid not register, please contact @muffinncps on dc if u have purchase this script")
 end
