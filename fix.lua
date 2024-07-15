@@ -47,57 +47,70 @@ function FormatNumber(num)
 end
 
 function sendWebhook(message)
-  if not options.check_webhook_use then return end
+    if not options.check_webhook_use then return end
+    if not webhook_url or webhook_url == "" then
+      log("Error: Webhook URL is not set")
+      return
+    end
+    
+    Sleep(1000)  -- 1 second delay before sending webhook
   
-  local success, error = pcall(function()
-      local waktuSekarang = os.date("%H:%M:%S")
-      local ingfokan = math.abs(GetPlayerInfo().gems - gems)
-      gems = GetPlayerInfo().gems
-
-      local myData = [[
-                  {
-                  "embeds": [
+    local success, error = pcall(function()
+        local waktuSekarang = os.date("%H:%M:%S")
+        local ingfokan = math.abs(GetPlayerInfo().gems - gems)
+        gems = GetPlayerInfo().gems
+  
+        local myData = [[
                     {
-                      "title": "Superbroadcast Premium",
-                      "color": "]] ..math.random(1000000,9999999).. [[",
-                      "fields": [
-                        {
-                          "name": "<:player:1203057110208876656> Player Name",
-                          "value": "```]] .. removeColor(GetLocal().name) .. [[```",
-                          "inline": false
-                        },
-                        {
-                          "name": "<:world:1203057112595562628> Current World",
-                          "value": "```]] .. GetWorld().name .. [[```",
-                          "inline": true
-                        },
-                        {
-                          "name": "<:gems:1203057115770650664> Gems Info",
-                          "value": "```Current Gems : ]] .. FormatNumber(gems) .. [[\nGems Used : ]] .. FormatNumber(ingfokan) .. [[```",
-                          "inline": true
-                        },
-                        {
-                          "name": "<a:broadcast:1203650179866296340> Superbroadcast Send",
-                          "value": "```]] .. message .. [[```",
-                          "inline": false
-                        }
-                      ]
+                    "embeds": [
+                      {
+                        "title": "Superbroadcast Premium",
+                        "color": "]] ..math.random(1000000,9999999).. [[",
+                        "fields": [
+                          {
+                            "name": "<:player:1203057110208876656> Player Name",
+                            "value": "```]] .. removeColor(GetLocal().name) .. [[```",
+                            "inline": false
+                          },
+                          {
+                            "name": "<:world:1203057112595562628> Current World",
+                            "value": "```]] .. GetWorld().name .. [[```",
+                            "inline": true
+                          },
+                          {
+                            "name": "<:gems:1203057115770650664> Gems Info",
+                            "value": "```Current Gems : ]] .. FormatNumber(gems) .. [[\nGems Used : ]] .. FormatNumber(ingfokan) .. [[```",
+                            "inline": true
+                          },
+                          {
+                            "name": "<a:broadcast:1203650179866296340> Superbroadcast Send",
+                            "value": "```]] .. message .. [[```",
+                            "inline": false
+                          }
+                        ]
+                      }
+                    ],
+                    "username": "𝐌𝐔𝐅𝐅𝐈𝐍𝐍 𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐓𝐘",
+                    "avatar_url": "https://media.discordapp.net/attachments/1136847163905818636/1196094627372073041/MUFFINN_STORE_ICON.png?ex=65f6fa6d&is=65e4856d&hm=51bb58f88d7c0fac188ffe8d5181d63767f060e53a90d97d9f3bee0c9fea0286&format=webp&quality=lossless&",
+                    "attachments": []
                     }
-                  ],
-                  "username": "𝐌𝐔𝐅𝐅𝐈𝐍𝐍 𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐓𝐘",
-                  "avatar_url": "https://media.discordapp.net/attachments/1136847163905818636/1196094627372073041/MUFFINN_STORE_ICON.png?ex=65f6fa6d&is=65e4856d&hm=51bb58f88d7c0fac188ffe8d5181d63767f060e53a90d97d9f3bee0c9fea0286&format=webp&quality=lossless&",
-                  "attachments": []
-                  }
-      ]]
-      SendWebhook(webhook_url, myData)
-  end)
-
-  if not success then
-      log("Error sending webhook: " .. tostring(error))
+        ]]
+        MakeRequest(webhook_url, "POST", {["Content-Type"] = "application/json"}, myData)
+    end)
+  
+    if not success then
+        log("Error sending webhook: " .. tostring(error))
+    end
   end
-end
 
 function sendWebhookFinished(completionMessage)
+  if not webhook_url or webhook_url == "" then
+    log("Error: Webhook URL is not set")
+    return
+  end
+
+  Sleep(1000)  -- 1 second delay before sending finished webhook
+
   local finishedEmbed = [[
       {
           "username": "𝐌𝐔𝐅𝐅𝐈𝐍𝐍 𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐓𝐘",
@@ -114,11 +127,7 @@ function sendWebhookFinished(completionMessage)
           ]
       }
   ]]
-  SendWebhook(webhook_url, finishedEmbed)
-end
-
-function SendWebhook(url, data)
-    MakeRequest(url, "POST", {["Content-Type"] = "application/json"}, data)
+  MakeRequest(webhook_url, "POST", {["Content-Type"] = "application/json"}, finishedEmbed)
 end
 
 function cleanSignText(str)
@@ -137,6 +146,7 @@ function startsb()
     local total_sent = 0
     local initial_count = counterMode == "up" and 1 or SpamDelay
     count = initial_count
+
     spamThread = RunThread(function()
         while options.check_startsb do
             local currentWorld = GetWorld()
@@ -161,27 +171,59 @@ function startsb()
             end
 
             if teks ~= "" then
-                if counterMode == "up" and count <= SpamDelay then
-                    SendPacket(2, "action|input\ntext|/sb " .. teks .. " `##MuffinnProxy")
-                    total_sent = total_sent + 1
+                if (counterMode == "up" and count <= SpamDelay) or (counterMode == "down" and count > 0) then
+                    overlayText("SB IN 3")
                     Sleep(1000)
-                    SendPacket(2, "action|input\ntext|/me `^Super Broadcasts Send (megaphone) `bSB Count `0[`b" .. count .. "`0/`b" .. SpamDelay.. "`0] `##MuffinnProxy")
-                    local message = "SB sent " .. count .. " out of " .. SpamDelay
-                    pcall(sendWebhook, message)
-                    count = count + 1
-                    Sleep(90000)
-                elseif counterMode == "down" then
-                    count = SpamDelay
-                    while count > 0 and options.check_startsb do
-                        SendPacket(2, "action|input\ntext|/sb " .. teks .. " `##MuffinnProxy")
-                        total_sent = total_sent + 1
-                        Sleep(1000)
-                        count = count - 1
-                        SendPacket(2, "action|input\ntext|/me `^Super Broadcasts Send (megaphone) `bSB Remains `0[`b" .. count .. "`0] `##MuffinnProxy")
-                        local message = "SB Remains " .. count
-                        pcall(sendWebhook, message)
-                        Sleep(90000)
+                    overlayText("SB IN 2")
+                    Sleep(1000)
+                    overlayText("SB IN 1")
+                    Sleep(1000)
+                    pcall(function()
+                        SendPacket(2, "action|input\ntext|/sb " .. teks)
+                    end)
+                    total_sent = total_sent + 1
+                    Sleep(2000)
+                    
+                    -- Calculate end time based on SpamDelay
+                    local end_time = os.time() + (SpamDelay * 90) -- 90 seconds per SB
+                    local end_time_formatted = os.date("%H:%M", end_time)
+                    
+                    local status_message
+                    if counterMode == "up" then
+                        if SpamDelay >= 40 then
+                            local hours = math.floor(SpamDelay / 40)
+                            status_message = string.format("`^Super Broadcasts Send (megaphone) `bSB Count `0[`b%d`0/`b%d`0] `0(sb end in %d hour%s at %s`0) `##MuffinnProxy", 
+                                count, SpamDelay, hours, hours > 1 and "s" or "", end_time_formatted)
+                        else
+                            local minutes = math.ceil(SpamDelay * 1.5)
+                            status_message = string.format("`^Super Broadcasts Send (megaphone) `bSB Count `0[`b%d`0/`b%d`0] `0(sb end in %d minute%s at %s`0) `##MuffinnProxy", 
+                                count, SpamDelay, minutes, minutes > 1 and "s" or "", end_time_formatted)
+                        end
+                    else
+                        if SpamDelay >= 40 then
+                            local hours = math.floor(SpamDelay / 40)
+                            status_message = string.format("`^Super Broadcasts Send (megaphone) `bSB Remains `0[`b%d`0] `0(sb end in %d hour%s at %s`0) `##MuffinnProxy", 
+                                count, hours, hours > 1 and "s" or "", end_time_formatted)
+                        else
+                            local minutes = math.ceil(SpamDelay * 1.5)
+                            status_message = string.format("`^Super Broadcasts Send (megaphone) `bSB Remains `0[`b%d`0] `0(sb end in %d minute%s at %s`0) `##MuffinnProxy", 
+                                count, minutes, minutes > 1 and "s" or "", end_time_formatted)
+                        end
                     end
+                    
+                    pcall(function()
+                        SendPacket(2, "action|input\ntext|/me " .. status_message)
+                    end)
+                    Sleep(3000)
+                    local message = counterMode == "up" and ("SB sent " .. count .. " out of " .. SpamDelay) or ("SB Remains " .. count)
+                    pcall(sendWebhook, message)
+                    
+                    if counterMode == "up" then
+                        count = count + 1
+                    else
+                        count = count - 1
+                    end
+                    Sleep(90000)
                 else
                     -- SB finished
                     options.check_startsb = false
